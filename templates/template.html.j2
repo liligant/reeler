@@ -32,24 +32,24 @@
           <div class="collapse navbar-collapse justify-content-end align-center" id="main-nav">
             <ul class="navbar-nav">
                 <li class="nav-item px-2">
-                <a href="/material" class="nav-link" id="greytext">about us</a>
+                <a href="/about" class="nav-link" id="greytext">about us</a>
               </li>
               <li class="nav-item px-2">
-                <a href="/personal" class="nav-link" id="greytext">Support us</a>
+                <a href="/support" class="nav-link" id="greytext">Support us</a>
               </li>
               <li class="nav-item px-2">
-                <a href="/progressive" class="nav-link" id="greytext">advice</a>
+                <a href="/advice" class="nav-link" id="greytext">advice</a>
               </li>
-{%if user[0]%}
+{%if userv[0]%}
 	      <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle"  id="hamburger" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-		  <button class="btn btn-primary btn-dark" id="greytext">ellie</button> 
+		  <button class="btn btn-primary btn-dark" id="greytext">{{ userv[1] }}</button> 
          </a>
           <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="hamburger">
             <li><a class="dropdown-item" href="/logout ">Log out</a></li>
           </ul>
         </li>
-{%else%}<btn>hi</btn>
+{%else%}<btn href="/login">Log in</btn>
 {%endif%}
           </div>
       </nav>

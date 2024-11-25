@@ -9,3 +9,9 @@
 #greynavbar {
   background-color: #585858;
 }
+.centered {
+	position:absolute;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+}
