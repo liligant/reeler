@@ -2,9 +2,9 @@ import PIL
 
 
 from flask import Flask,redirect,render_template,session,flash
+#from flask_login import LoginManager
 
-
-
+#login_manager = LoginManager()
 def get_logged_in():
     """
 uses session to browse the session cookies to see if the
@@ -16,7 +16,7 @@ with the user's name
 atm this returns placeholder values
 this function should be fixed later in development 
     """
-    if False:
+    if True:
         return [True,'ellie']
         #return [False]Log
     else:
@@ -37,6 +37,7 @@ def pageA():
 def pageB():
     return render_template('register.html')
 @app.route('/logout')
+@login_required
 def logout():
     session[user] = None
     return redirect('/home')
