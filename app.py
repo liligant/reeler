@@ -1,10 +1,10 @@
 import PIL
-
+import sqlite3
 
 from flask import Flask,redirect,render_template,session,flash
-#from flask_login import LoginManager
+from flask_login import LoginManager
 
-#login_manager = LoginManager()
+login_manager = LoginManager()
 def get_logged_in():
     """
 uses session to browse the session cookies to see if the
