@@ -23,12 +23,15 @@ def dbinit():
     con.commit()
     con.close()
 def insertuser(name,email,password):
+    #we should make sure our app uses https so its safe for the user to send 
+    #their password over a html form
+    #userid is an md5 hash of the email
     userid = hashlib.md5(bytes(email,'utf-8')).hexdigest()
     #hashes the password so its secure on the system
     password = str(bcrypt.hashpw(bytes(email+password,'utf-8'), bcrypt.gensalt()))[2:-1]
     con = sqlite3.connect('users.db')
     cur = con.cursor()
-    print(f"insert into  users(userID,username,email,passhash) values ('{userid}','{name}','{email}','{password}');")
+    #print(f"insert into  users(userID,username,email,passhash) values ('{userid}','{name}','{email}','{password}');")
     cur.execute(f" insert into  users(userID,username,email,passhash) values ('{userid}','{name}','{email}','{password}');")
     con.commit()
     con.close()
@@ -37,11 +40,15 @@ def fetchUser(userID,pword):
     cur = con.cursor()
     cur.execute(f"select * from users where userID='{userID}' limit 1;")
     rows = cur.fetchone()
+    print(rows)
     #password = bcrypt.hashpw(bytes(pword,'utf-8'), bcrypt.gensalt())
-    print(bcrypt.checkpw(pword.encode('utf-8'),bytes(rows[3],'utf-8')))
+    if bcrypt.checkpw(pword.encode('utf-8'),bytes(rows[3],'utf-8')):
+        return [rows[0],rows[1]]
+    else:
+        return False
 
     #print(rows[3])
     #print(bytes('$2b$12$/PYMeDhTr4eXkH.lTu8wtOVLAwYlcm8JZ4ep/gCicIEvZN9wuaii2','utf-8'))
-fetchUser('30d9ce5439c22a098a68d5d78496a526','nam2e@gmail.compassword')
+print(fetchUser('30d9ce5439c22a098a68d5d78496a526','nam2e@gmail.compassword') == False)
 #dbinit()
 #insertuser('ellie','nam2e@gmail.com','password')

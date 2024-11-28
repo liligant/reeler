@@ -1,9 +1,9 @@
 import PIL
 import sqlite3
-
-from flask import Flask,redirect,render_template,session,flash
+from dbcommands import fetchUser
+from flask import Flask,redirect,render_template,session,flash,request
 from flask_login import LoginManager
-
+from flask_session import Session
 login_manager = LoginManager()
 def get_logged_in():
     """
@@ -23,6 +23,7 @@ this function should be fixed later in development
         return [False,'PLACEHOLDER USER']
 
 app=Flask(__name__)
+Session(app)
 @app.route('/')
 def gohome():
     return redirect('/home')
@@ -32,14 +33,25 @@ def home():
 #abc are to be replaced when 
 @app.route('/login')
 def pageA():
-    return render_template('login.html')
+    if not session.get('name'):
+        return render_template('login.html')
+    else:
+        if request.method == "POST":
+            email = request.form.get('email')
+            pword= request.form.get('password')
+            dbresponse = fetchUser(email,pword)
+            if dbresponse != False:
+                session['id'] = dbresponse[0]
+                session['name'] = dbresponse[1]
+        return redirect('/home')
 @app.route('/register')
 def pageB():
     return render_template('register.html')
 @app.route('/logout')
 @login_required
 def logout():
-    session[user] = None
+    session['name'] = None
+    session['id'] = None
     return redirect('/home')
 @app.route('/c')
 def pageC():
