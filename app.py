@@ -14,16 +14,15 @@ whether the user is logged in and the second value is a string
 with the user's name
 
 atm this returns placeholder values
-this function should be fixed later in development 
     """
-    if True:
+    if False:
         return [True,'ellie']
         #return [False]Log
     else:
         return [False,'PLACEHOLDER USER']
 
 app=Flask(__name__)
-Session(app)
+#Session(app)
 @app.route('/')
 def gohome():
     return redirect('/home')
@@ -41,17 +40,18 @@ def pageA():
             pword= request.form.get('password')
             dbresponse = fetchUser(email,pword)
             if dbresponse != False:
-                session['id'] = dbresponse[0]
-                session['name'] = dbresponse[1]
+                pass
+                #session['id'] = dbresponse[0]
+                #session['name'] = dbresponse[1]
         return redirect('/home')
 @app.route('/register')
 def pageB():
     return render_template('register.html')
 @app.route('/logout')
-@login_required
+#@login_required
 def logout():
-    session['name'] = None
-    session['id'] = None
+    #session['name'] = None
+    #session['id'] = None
     return redirect('/home')
 @app.route('/c')
 def pageC():
