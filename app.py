@@ -15,7 +15,6 @@ with the user's name
 
 atm this returns placeholder values
     """
-    #test
     if False:
         return [True,'ellie']
         #return [False]Log
