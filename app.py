@@ -1,29 +1,14 @@
-import PIL
-import sqlite3
-from dbcommands import fetchUser
+import hashlib
+from dbcommands import fetchUser,validate_password
 from flask import Flask,redirect,render_template,session,flash,request
+from phishing_detector import detect_phishing
 from flask_login import LoginManager
 from flask_session import Session
-from pyngrok import ngrok 
-
-ngrok.set_auth_token("2n9XEXXU68CofplPN1lLvUiXqef_ihJ8EF4vhfScC9LWLcsy")
-def start_ngrok():
-    # Start the ngrok process with subprocess, specifying that ngrok should tunnel HTTP traffic to port 5000
-    ngrok_process = subprocess.Popen(['ngrok', 'http', '5000'])
-    # Delay the script for 4 seconds to allow ngrok time to initialize and start the tunnel
-    time.sleep(4)
-    # Fetch the ngrok tunnel information using an HTTP GET request to ngrok's local API
-    response = requests.get('http://localhost:4040/api/tunnels')
-    # Parse the JSON response to get the details of the tunnel
-    tunnel_info = response.json()
-    # Extract the public URL where the ngrok tunnel is accessible
-    public_url = tunnel_info['tunnels'][0]['public_url']
-    # Print the ngrok tunnel URL to the console
-    print(" * ngrok tunnel URL:", public_url)
-    # Return the public URL for use elsewhere in the script
-    return public_url
+from email_validator import validate_email, EmailNotValidError
+from pyngrok import ngrok
 
 login_manager = LoginManager()
+#Ellie - run source /venv/bin/activate to use pip
 def get_logged_in():
     """
 uses session to browse the session cookies to see if the
@@ -39,9 +24,8 @@ atm this returns placeholder values
         #return [False]Log
     else:
         return [False,'PLACEHOLDER USER']
-    
-app=Flask(__name__)
 
+app=Flask(__name__)
 #Session(app)
 @app.route('/')
 def gohome():
@@ -50,15 +34,41 @@ def gohome():
 def home():
     return render_template('home.html.j2',userv=get_logged_in())
 #abc are to be replaced when 
-@app.route('/login')
+@app.route('/validate',methods=['POST','GET'])
+def is_it_a_scam():
+    if request.method =="POST":
+        email_text = request.form['email_text']
+        prediction, explanation = detect_phishing(email_text)
+
+        return render_template('upload.html.j2', prediction=prediction, explanation=explanation,userv=get_logged_in())
+
+    elif request.method == "GET": 
+        return render_template('upload.html.j2',userv=get_logged_in())
+
+@app.route('/login',methods=['POST','GET'])
 def pageA():
+    if request.method == "POST":
+            email = request.form.get('email')
+            pword= request.form.get('password')
+            print(email+pword)
+            dbresponse = fetchUser(email,pword)
+            print(f'the response is {dbresponse}')
+            if dbresponse != False:
+                return render_template('login.html.j2',userv=get_logged_in())
+                #session['id'] = dbresponse[0]
+                #session['name'] = dbresponse[1]
+            if type(dbresponse) == "<class 'str'>":
+                return redirect('/home')
     if not session.get('name'):
+        print(session.get('name'))
         return render_template('login.html.j2',userv=get_logged_in())
     else:
         if request.method == "POST":
             email = request.form.get('email')
             pword= request.form.get('password')
-            dbresponse = fetchUser(email,pword)
+            userid = hashlib.md5(bytes(email,'utf-8')).hexdigest()
+            dbresponse = fetchUser(userid,pword)
+            print(f'the response is {dbresponse}')
             if dbresponse != False:
                 return render_template('login.html.j2',userv=get_logged_in())
                 #session['id'] = dbresponse[0]
@@ -66,7 +76,22 @@ def pageA():
         return redirect('/home')
 @app.route('/createaccount')
 def pageB():
-    return render_template('createaccount.html.j2',userv=get_logged_in())
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        try:
+            valid = validate_email(email)
+            email = valid.email
+        except EmailNotValidError as e:
+            return render_template_string(register_template, error=str(e))
+
+        if not validate_password(password):
+            return render_template_string(register_template, error='Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a digit, and a special character.')
+
+        hashed_password = generate_password_has(password)
+    else:
+        return render_template('createaccount.html.j2',userv=get_logged_in())
 @app.route('/logout')
 #@login_required
 def logout():
@@ -77,4 +102,4 @@ def logout():
 def pageC():
     print(get_logged_in())
     return render_template('template.html.j2',userv=get_logged_in())
-app.run(port=5000)
+app.run()
