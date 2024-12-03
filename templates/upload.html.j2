@@ -1,0 +1,15 @@
+{% extends 'template.html.j2'%}
+{%block content%}
+<body style="background-color:#6a6a6a;">
+<div class="greybox">
+    <h1>Phishing Email Detector</h1>
+    <form method="post" enctype="multipart/form-data">
+        <textarea name="email_text" placeholder="Paste email content here..." rows="10" cols="50"></textarea><br>
+        <button type="submit">Check Email</button>
+    </form>
+    {% if prediction %}
+        <h2>Prediction: {{ prediction }}</h2>
+        <p>{{ explanation }}</p>
+    {% endif %}</div>
+</body>
+{%endblock%}
