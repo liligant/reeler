@@ -4,8 +4,10 @@
 #boldtext {
 	font-weight:bold;
 	font-size:115%
-
 }
+* {
+	font-family: courier;
+	}
 #greynavbar {
   background-color: #585858;
 }
@@ -14,4 +16,8 @@
 	top:50%;
 	left:50%;
 	transform:translate(-50%,-50%);
+}
+.greybox {
+	background-color:#6a6a6a;
+	text-align:center;
 }

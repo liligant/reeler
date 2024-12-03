@@ -1,0 +1,56 @@
+{% extends 'template.html.j2'%}
+{%block content%}
+<body style="background-color:#6a6a6a;">
+<body style="background-color:#6a6a6a;">
+<div class="greybox">
+    
+	<h1>{% block title %}<p><br> Create an Account </p>{% endblock %}</h1>
+    <form method="post">
+        <input type="text" name="email"
+               placeholder="Email"
+	       class="form-control mx-auto"
+	       
+	       style="width:700px;font-size:10pt;"
+	       value="{{ request.form['email'] }}"></input>
+	<br> 
+	<div class="row ">
+		<div class="col" style="transform:translateX(62.75%);">
+      <input type="text" name="fname"
+               placeholder="First Name"
+	       class="form-control "
+	       style="width:340px;font-size:10pt;"
+	       value="{{ request.form['fname'] }}"></input>
+		</div>
+		<div class="col">
+      <input type="text" name="lname"
+               placeholder="Last Name"
+	       class="form-control "
+	       style="width:340px;font-size:10pt;"
+	       value="{{ request.form['lname'] }}"></input>
+		</div></div>
+        <br>
+
+     
+        <input type="text" name="orig"
+               placeholder="Password"
+	       class="form-control mx-auto"
+	       style="width:700px;font-size:10pt;"
+	       value="{{ request.form['orig'] }}"></input>
+	<br> 
+        <input type="text" name="conf"
+               placeholder="Password confirmation"
+	       class="form-control mx-auto"
+	       style="width:700px;font-size:10pt;"
+	       value="{{ request.form['conf'] }}"></input>
+	<br>
+<br>	<p> Have an account? Log In <a style="text-decoration:underline;" href="/login"> here </a> </p>
+	<br>
+        <button type="submit" class="btn btn-primary"style="height:80px; width:120px;">Sign up</button>
+      <br>   <br>
+ {% for error in errors %}
+            <p id="redtext">{{ error }}</p>
+        {% endfor %}
+    </form>
+</div>
+</body>
+{%endblock%}
