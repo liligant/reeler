@@ -1,3 +1,4 @@
+import re
 import bcrypt
 import hashlib
 import sqlite3
@@ -46,17 +47,24 @@ def insertuser(name,email,password):
 def fetchUser(userID,pword):
     con = sqlite3.connect('users.db')
     cur = con.cursor()
+    print(userID)
     cur.execute(f"select * from users where userID='{userID}' limit 1;")
     rows = cur.fetchone()
     print(rows)
     #password = bcrypt.hashpw(bytes(pword,'utf-8'), bcrypt.gensalt())
-    if bcrypt.checkpw(pword.encode('utf-8'),bytes(rows[3],'utf-8')):
-        return [rows[0],rows[1]]
-    else:
+    try:
+        x= bcrypt.checkpw(pword.encode('utf-8'),bytes(rows[3],'utf-8'))
+        if x:
+            return [rows[0],rows[1]]
+        else:
+            return False
+    
+    except TypeError:
         return False
 
     #print(rows[3])
     #print(bytes('$2b$12$/PYMeDhTr4eXkH.lTu8wtOVLAwYlcm8JZ4ep/gCicIEvZN9wuaii2','utf-8'))
-print(fetchUser('30d9ce5439c22a098a68d5d78496a526','nam2e@gmail.compassword') == False)
+if __name__ =='__main__':
+    print(fetchUser('30d9ce5439c22a098a68d5d78496a526','nam2e@gmail.compassword'))
 #dbinit()
 #insertuser('ellie','nam2e@gmail.com','password')

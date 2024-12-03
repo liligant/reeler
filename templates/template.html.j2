@@ -40,7 +40,7 @@
               <li class="nav-item px-2">
                 <a href="/advice" class="nav-link" id="greytext">Advice</a>
               </li>
-{%if userv[0]%}
+{%if not (userv[0] == False)%}
 	      <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle"  id="hamburger" role="button" data-bs-toggle="dropdown" aria-expanded="false">
 		  <button class="btn btn-primary btn-dark" id="greytext">{{ userv[1] }}</button> 

@@ -1,3 +1,4 @@
+import os
 import hashlib
 from dbcommands import fetchUser,validate_password
 from flask import Flask,redirect,render_template,session,flash,request
@@ -8,7 +9,7 @@ from email_validator import validate_email, EmailNotValidError
 from pyngrok import ngrok
 
 login_manager = LoginManager()
-#Ellie - run source /venv/bin/activate to use pip
+# for Ellie - run source /venv/bin/activate to use pip
 def get_logged_in():
     """
 uses session to browse the session cookies to see if the
@@ -19,13 +20,14 @@ with the user's name
 
 atm this returns placeholder values
     """
-    if False:
-        return [True,'ellie']
+    if 'id' in session:
+        return [session['id'],session['name']]
         #return [False]Log
     else:
         return [False,'PLACEHOLDER USER']
 
 app=Flask(__name__)
+app.secret_key = os.urandom(24) 
 #Session(app)
 @app.route('/')
 def gohome():
@@ -50,15 +52,17 @@ def pageA():
     if request.method == "POST":
             email = request.form.get('email')
             pword= request.form.get('password')
-            print(email+pword)
-            dbresponse = fetchUser(email,pword)
-            print(f'the response is {dbresponse}')
+            #print(email+pword)
+            userid = hashlib.md5(bytes(email,'utf-8')).hexdigest()
+            dbresponse = fetchUser(userid,email+pword)
+            
             if dbresponse != False:
-                return render_template('login.html.j2',userv=get_logged_in())
-                #session['id'] = dbresponse[0]
-                #session['name'] = dbresponse[1]
-            if type(dbresponse) == "<class 'str'>":
-                return redirect('/home')
+                session['id'] = dbresponse[0]
+                session['name'] = dbresponse[1]
+                print(f'luahflkafh{session['id']}')
+                return render_template('home.html.j2',userv=get_logged_in())
+
+
     if not session.get('name'):
         print(session.get('name'))
         return render_template('login.html.j2',userv=get_logged_in())
@@ -95,8 +99,8 @@ def pageB():
 @app.route('/logout')
 #@login_required
 def logout():
-    #session['name'] = None
-    #session['id'] = None
+    session.pop('id')
+    session.pop('name')
     return redirect('/home')
 @app.route('/c')
 def pageC():
