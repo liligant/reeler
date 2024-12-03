@@ -48,25 +48,25 @@ def gohome():
     return redirect('/home')
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    return render_template('home.html.j2',userv=get_logged_in())
 #abc are to be replaced when 
 @app.route('/login')
 def pageA():
     if not session.get('name'):
-        return render_template('login.html')
+        return render_template('login.html.j2',userv=get_logged_in())
     else:
         if request.method == "POST":
             email = request.form.get('email')
             pword= request.form.get('password')
             dbresponse = fetchUser(email,pword)
             if dbresponse != False:
-                pass
+                return render_template('login.html.j2',userv=get_logged_in())
                 #session['id'] = dbresponse[0]
                 #session['name'] = dbresponse[1]
         return redirect('/home')
-@app.route('/register')
+@app.route('/createaccount')
 def pageB():
-    return render_template('register.html')
+    return render_template('createaccount.html.j2',userv=get_logged_in())
 @app.route('/logout')
 #@login_required
 def logout():
