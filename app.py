@@ -38,6 +38,9 @@ def home():
 #abc are to be replaced when 
 @app.route('/validate',methods=['POST','GET'])
 def is_it_a_scam():
+    status = get_logged_in()
+    if status[0] == False:
+        return redirect('/home')
     if request.method =="POST":
         email_text = request.form['email_text']
         prediction, explanation = detect_phishing(email_text)
@@ -45,6 +48,7 @@ def is_it_a_scam():
         return render_template('upload.html.j2', prediction=prediction, explanation=explanation,userv=get_logged_in())
 
     elif request.method == "GET": 
+   
         return render_template('upload.html.j2',userv=get_logged_in())
 
 @app.route('/login',methods=['POST','GET'])
@@ -114,8 +118,9 @@ def pageB():
 @app.route('/logout')
 #@login_required
 def logout():
-    session.pop('id')
-    session.pop('name')
+    if 'id' in session:
+        session.pop('id')
+        session.pop('name')
     return redirect('/home')
 @app.route('/c')
 def pageC():
