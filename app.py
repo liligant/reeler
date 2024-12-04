@@ -1,6 +1,6 @@
 import os
 import hashlib
-from dbcommands import fetchUser,validate_password
+from dbcommands import fetchUser,validate_password,insertuser
 from flask import Flask,redirect,render_template,session,flash,request
 from phishing_detector import detect_phishing
 from flask_login import LoginManager
@@ -64,7 +64,7 @@ def pageA():
 
 
     if not session.get('name'):
-        print(session.get('name'))
+        #print(session.get('name'))
         return render_template('login.html.j2',userv=get_logged_in())
     else:
         if request.method == "POST":
@@ -78,24 +78,39 @@ def pageA():
                 #session['id'] = dbresponse[0]
                 #session['name'] = dbresponse[1]
         return redirect('/home')
-@app.route('/createaccount')
+@app.route('/createaccount',methods=['POST','GET'])
 def pageB():
     if request.method == 'POST':
         email = request.form['email']
-        password = request.form['password']
+        name = request.form['fname']
+        if request.form['orig'] == request.form['conf']:
+            password = request.form['orig']
+        else:
+            return render_template('createaccount.html.j2',userv=get_logged_in(), error="passwords don't match")
+
 
         try:
             valid = validate_email(email)
             email = valid.email
         except EmailNotValidError as e:
-            return render_template_string(register_template, error=str(e))
+            return render_template('createaccount.html.j2',userv=get_logged_in(), error=str(e))
 
         if not validate_password(password):
-            return render_template_string(register_template, error='Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a digit, and a special character.')
+            return render_template('createaccount.html.j2',userv=get_logged_in(), error='Password must be at least 8 characters long and contain an uppercase letter, a lowercase letter, a digit, and a special character.')
 
-        hashed_password = generate_password_has(password)
+        insertuser(name,email,password)
+        userid = hashlib.md5(bytes(email,'utf-8')).hexdigest()
+        dbresponse = fetchUser(userid,email+password)
+        if not dbresponse == False:
+            session['id'] = dbresponse[0]
+            session['name'] = dbresponse[1]
+            return render_template('home.html.j2',userv=get_logged_in(),error='')
+        else:
+            return render_template('createaccount.html.j2',userv=get_logged_in(), error='database error, Do you already have an account with us?')
+
     else:
-        return render_template('createaccount.html.j2',userv=get_logged_in())
+        return render_template('createaccount.html.j2',userv=get_logged_in(), error='')
+
 @app.route('/logout')
 #@login_required
 def logout():

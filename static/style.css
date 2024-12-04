@@ -5,8 +5,12 @@
 	font-weight:bold;
 	font-size:115%
 }
+#redtext {
+	font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; 
+	color: #f06e4d;
+}
 * {
-	font-family: courier;
+	font-family: entury Gothic,CenturyGothic,AppleGothic,sans-serif;
 	}
 #greynavbar {
   background-color: #585858;
