@@ -64,8 +64,9 @@ def pageA():
                 session['id'] = dbresponse[0]
                 session['name'] = dbresponse[1]
                 print(f'luahflkafh{session['id']}')
-                return render_template('home.html.j2',userv=get_logged_in())
-
+                return redirect('/home')
+            else:
+                return render_template('login.html.j2',userv=get_logged_in())
 
     if not session.get('name'):
         #print(session.get('name'))
