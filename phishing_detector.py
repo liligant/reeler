@@ -1,6 +1,11 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
 def detect_phishing(email_text):
+    """
+    The detect_phishing function uses a pretrained LLM to detect weather the inputted email is a real email or a phishing email. 
+    It outputs its prediction, along with it's confidence level for that prediction. The LLM model that was used is called 
+    cybersectony/phishing-email-detection-distilbert_v2.4.1. https://huggingface.co/cybersectony/phishing-email-detection-distilbert_v2.4.1
+    """
     # Tokenize and prepare the input
     tokenizer = AutoTokenizer.from_pretrained("cybersectony/phishing-email-detection-distilbert_v2.4.1")
     model = AutoModelForSequenceClassification.from_pretrained("cybersectony/phishing-email-detection-distilbert_v2.4.1")

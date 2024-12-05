@@ -11,19 +11,28 @@ the users db is laid out like this
     passhash - a secure hash of the users name + password It must be  impossible to decrypt this
 """
 def dbinit():
+    """
+    creates the table 
+    it should only be run once before the website goes live as
+      it would wipe all available data present in the file
+    """
     con = sqlite3.connect('users.db')
     cur = con.cursor()
     cur.execute("drop table if exists users;")
     cur.execute("""
     create table users (
-        userID varchar(255),
+        userID varchar(255) primary key unique,
         username varchar(360),
-        email varchar(320),
+        email varchar(320) unique,
         passhash varchar(255)
     );""")
     con.commit()
     con.close()
 def validate_password(password):
+    """
+    makes sure the user's password matches a string with some restraints
+    so that its secure
+    """
     if (len(password) >= 8 and
         re.search(r"[A-Z]", password) and
         re.search(r"[a-z]", password) and
@@ -34,7 +43,14 @@ def validate_password(password):
 def insertuser(name,email,password):
     #we should make sure our app uses https so its safe for the user to send 
     #their password over a html form
-    #userid is an md5 hash of the email
+    """
+    takes in the users details and adds their account to the system database
+    #userid is an md5 hash of the email. its the primary key
+    passhash is a secure bcrypt hash of the combination of the email and entered password
+    if its the password alone then a malicious actor could see which passwords hashes which and have access to the those accounts
+    bcrypt is one of the more secure hashing algorithms
+    """
+    
     userid = hashlib.md5(bytes(email,'utf-8')).hexdigest()
     #hashes the password so its secure on the system
     password = str(bcrypt.hashpw(bytes(email+password,'utf-8'), bcrypt.gensalt()))[2:-1]
@@ -45,6 +61,11 @@ def insertuser(name,email,password):
     con.commit()
     con.close()
 def fetchUser(userID,pword):
+    """
+    takes the users id and a string containing their email concatenated with the entered password
+    fetches the stored hashed data with the id that matches the userid inputted 
+    if it does it returns true and the users first name
+    """
     con = sqlite3.connect('users.db')
     cur = con.cursor()
     print(userID)

@@ -18,7 +18,10 @@
 		  <img src="static/img/3bar.png"height=30 width=30>
           </a>
           <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="hamburger">
-            <li><a class="dropdown-item" href="/one">one</a></li>
+          {%if not (userv[0] == False)%}
+
+            <li><a class="dropdown-item" href="/validate">check mail</a></li>
+          {%endif%}
             <li><a class="dropdown-item" href="/two">two</a></li>
             <li><a class="dropdown-item" href="/three">three</a></li>
           </ul>
@@ -45,6 +48,7 @@
 		  <button class="btn btn-primary btn-dark" id="greytext">{{ userv[1] }}</button> 
          </a>
           <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="hamburger">
+            <li><a class="dropdown-item" href="/validate">check mail</a></li>
             <li><a class="dropdown-item" href="/logout ">Log out</a></li>
           </ul>
         </li>
